@@ -66,11 +66,11 @@ def collect_info(movies_list):
 def output_best_movies(movies_list, amount):
     best_movies = sorted(movies_list, key=lambda x: x['rate'])[-amount:]
     print('Movies with the highest rating:\r\n')
-    print('{4}{5:>2s}{4:^3}{0:^44s}{4:^3}{1:6s}{4:^3}{2:>6s}{4:^3}{3:7s}{4:>2}'.format(
+    print('{4:2}{5:>2s}{4:^3}{0:^43s}{4:^3}{1:6s}{4:^3}{2:>6s}{4:^3}{3:7s}{4:>2}'.format(
         'Movie', 'rating', 'votes', 'cinemas', '|', '#'))
     print(80 * '-')
     for line, movie in enumerate(reversed(best_movies), 1):
-        print('{4}{5:>2d}{4:^3}{0:44s}{4:^3}{1:<6g}{4:^3}{2:>6d}{4:^3}{3:>7d}{4:>2}'.format(
+        print('{4:2}{5:>2d}{4:^3}{0:43s}{4:^3}{1:<6g}{4:^3}{2:>6d}{4:^3}{3:>7d}{4:>2}'.format(
             movie['title'], movie['rate'], movie['votes'], movie['cinemas'], '|', line))
 
 
