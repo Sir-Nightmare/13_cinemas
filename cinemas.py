@@ -24,12 +24,15 @@ def parse_afisha_list(raw_html, min_cinemas=10):
     return movies_list
 
 
-def get_rate_votes(movie, url, headers, session):
+def get_movie_page(movie, url, headers, session):
     params = {'first': 'yes', 'kp_query': movie}
     try:
-        page = session.get(url, params=params, headers=headers, timeout=10).content
+        return session.get(url, params=params, headers=headers, timeout=10).content
     except (Timeout, ConnectionError):
         exit('Maybe we\'re banned, try later')
+
+
+def get_rate_votes(page):
     soup = BeautifulSoup(page, 'lxml')
     rate = soup.find('span', class_='rating_ball')
     rate = float(rate.text) if rate else 0
@@ -54,7 +57,8 @@ def collect_info(movies_list):
     }
     session = requests.session()
     for movie in movies_list:
-        movie_rate = get_rate_votes(movie['title'], url, headers, session)
+        movie_page = get_movie_page(movie['title'], url, headers, session)
+        movie_rate = get_rate_votes(movie_page)
         movies_info.append({'title': movie['title'],
                             'cinemas': movie['cinemas'],
                             'rate': movie_rate['rate'],
@@ -63,8 +67,7 @@ def collect_info(movies_list):
     return movies_info
 
 
-def output_best_movies(movies_list, amount):
-    best_movies = sorted(movies_list, key=lambda x: x['rate'])[-amount:]
+def output_movies_list(movies_list):
     print('Movies with the highest rating:\r\n')
     print('{4:2}{5:>2s}{4:^3}{0:^43s}{4:^3}{1:6s}{4:^3}{2:>6s}{4:^3}{3:7s}{4:>2}'.format(
         'Movie', 'rating', 'votes', 'cinemas', '|', '#'))
@@ -87,4 +90,5 @@ if __name__ == '__main__':
     print('{} films were found. Downloading rating info started.\r\n'.format(number_of_movies))
     amount_to_show = args.movies if args.movies < number_of_movies else number_of_movies
     moves_info = collect_info(movies_list)
-    output_best_movies(moves_info, amount_to_show)
+    best_movies = sorted(movies_list, key=lambda x: x['rate'])[-amount_to_show:]
+    output_movies_list(best_movies)
