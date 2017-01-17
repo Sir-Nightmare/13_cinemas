@@ -72,7 +72,7 @@ def output_movies_list(movies_list):
     print('{4:2}{5:>2s}{4:^3}{0:^43s}{4:^3}{1:6s}{4:^3}{2:>6s}{4:^3}{3:7s}{4:>2}'.format(
         'Movie', 'rating', 'votes', 'cinemas', '|', '#'))
     print(80 * '-')
-    for line, movie in enumerate(reversed(best_movies), 1):
+    for line, movie in enumerate(movies_list, 1):
         print('{4:2}{5:>2d}{4:^3}{0:43s}{4:^3}{1:<6g}{4:^3}{2:>6d}{4:^3}{3:>7d}{4:>2}'.format(
             movie['title'], movie['rate'], movie['votes'], movie['cinemas'], '|', line))
 
@@ -81,14 +81,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--cinemas', default=10, type=int,
                         help='min number of cinemas with the movie, default = 10')
-    parser.add_argument('-c', '--movies', default=10, type=int,
+    parser.add_argument('-m', '--movies', default=10, type=int,
                         help='number of movies to show, default = 10')
     args = parser.parse_args()
     raw_html = fetch_afisha_page()
     movies_list = parse_afisha_list(raw_html, args.cinemas)
     number_of_movies = len(movies_list)
-    print('{} films were found. Downloading rating info started.\r\n'.format(number_of_movies))
     amount_to_show = args.movies if args.movies < number_of_movies else number_of_movies
+    print('{} movies were found. Downloading rating info started.\r\n'.format(number_of_movies))
     moves_info = collect_info(movies_list)
-    best_movies = sorted(movies_list, key=lambda x: x['rate'])[-amount_to_show:]
+    best_movies = sorted(moves_info, key=lambda x: x['rate'], reverse=True)[:amount_to_show]
     output_movies_list(best_movies)
