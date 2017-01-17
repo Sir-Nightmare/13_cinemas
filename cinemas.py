@@ -76,9 +76,9 @@ def output_best_movies(movies_list, amount):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cinemas', default=10, type=int,
+    parser.add_argument('-c', '--cinemas', default=10, type=int,
                         help='min number of cinemas with the movie, default = 10')
-    parser.add_argument('--movies', default=10, type=int,
+    parser.add_argument('-c', '--movies', default=10, type=int,
                         help='number of movies to show, default = 10')
     args = parser.parse_args()
     raw_html = fetch_afisha_page()
